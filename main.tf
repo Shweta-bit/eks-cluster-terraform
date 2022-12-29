@@ -6,7 +6,7 @@ terraform {
  }
 }
 resource "aws_iam_role" "eks-iam-role" {
- name = "prod-t0-eks-iam-role"
+ name = "<cluster-name>-eks-iam-role"
 
  path = "/"
 
@@ -35,8 +35,8 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly-EK
  role    = aws_iam_role.eks-iam-role.name
 }
 
-resource "aws_eks_cluster" "prod-t0-eks" {
- name = "prod-t0-cluster"
+resource "aws_eks_cluster" "<cluster-name>-eks" {
+ name = "<cluster-name>-cluster"
  role_arn = aws_iam_role.eks-iam-role.arn
 
  vpc_config {
@@ -48,9 +48,8 @@ resource "aws_eks_cluster" "prod-t0-eks" {
  ]
 }
 
-
 resource "aws_iam_role" "workernodes" {
-  name = "prod-t0-eks-node-group"
+  name = "<cluster-name>-eks-node-group"
  
   assume_role_policy = jsonencode({
    Statement = [{
@@ -85,8 +84,8 @@ resource "aws_iam_role" "workernodes" {
  }
 
   resource "aws_eks_node_group" "worker-node-group" {
-  cluster_name  = aws_eks_cluster.prod-t0-eks.name
-  node_group_name = "prod-t0-workernodes"
+  cluster_name  = aws_eks_cluster.<cluster-name>-eks.name
+  node_group_name = "<cluster-name>-workernodes"
   node_role_arn  = aws_iam_role.workernodes.arn
   subnet_ids   = [var.subnet_id_1, var.subnet_id_2]
   instance_types = ["t3.xlarge"]
@@ -103,5 +102,3 @@ resource "aws_iam_role" "workernodes" {
    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
   ]
  }
-
- 
